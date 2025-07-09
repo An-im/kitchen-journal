@@ -12,8 +12,6 @@ export default function Timeline() {
       if (key.startsWith("journal-")) {
         const date = key.replace("journal-", "");
         const text = localStorage.getItem(key);
-
-        // Buscar si hay un mood guardado
         const mood = localStorage.getItem(`mood-${date}`);
         storedEntries.push({ date, text, mood });
       }
@@ -24,18 +22,22 @@ export default function Timeline() {
   }, []);
 
   if (entries.length === 0) {
-    return <p className="mt-10 text-gray-400 italic">No entries yet...</p>;
+    return <p className="mt-10 text-gray-400 italic font-handwritten">No entries yet…</p>;
   }
 
   return (
-    <div className="mt-12 w-full max-w-2xl">
-      <h2 className="text-2xl font-semibold mb-4 text-pink-600">Past Entries</h2>
+    <div className="mt-12 w-full">
+      <h2 className="text-2xl font-handwritten text-[#a17c6b] mb-4">Past Entries</h2>
       <ul className="space-y-4">
         {entries.map(({ date, text, mood }) => (
-          <li key={date} className="bg-white p-4 rounded-xl border border-pink-200 shadow">
-            <p className="text-sm text-gray-500 mb-1">{new Date(date).toDateString()}</p>
-            {mood && <span className="text-xl">{mood}</span>}
-            <p className="text-gray-700 mt-2 line-clamp-2">{text}</p>
+          <li key={date} className="bg-white border border-[#f4e7d4] rounded-xl p-4 shadow-sm">
+            <div className="flex justify-between items-center mb-2">
+              <p className="text-sm text-gray-500 font-serif">
+                {new Date(date).toDateString()}
+              </p>
+              {mood && <span className="text-2xl">{mood}</span>}
+            </div>
+            <p className="text-gray-700 text-sm font-serif whitespace-pre-line line-clamp-3">{text}</p>
           </li>
         ))}
       </ul>

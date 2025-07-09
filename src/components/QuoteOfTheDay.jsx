@@ -20,8 +20,9 @@ export default function QuoteOfTheDay() {
   }, []);
 
   return (
-    <div className="mt-4 p-4 bg-white border border-pink-200 rounded-xl shadow text-center max-w-md text-gray-600 italic text-lg">
+    <div className="mb-6 text-center text-xl font-handwritten text-[#a17c6b] bg-[#fef6e4] p-4 rounded-xl shadow-sm border border-[#f4e7d4] italic">
       {quote}
     </div>
   );
 }
+

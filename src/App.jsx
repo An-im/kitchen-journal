@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MoodSelector from "./components/MoodSelector";
 import JournalEntry from "./components/JournalEntry";
 import QuoteOfTheDay from "./components/QuoteOfTheDay";
-import { useEffect } from "react";
 import Timeline from "./components/Timeline";
+import Layout from "./components/Layout";
+import Divider from "./components/Divider"; // ✅
 
 function App() {
   const [selectedMood, setSelectedMood] = useState(null);
@@ -16,14 +17,23 @@ function App() {
   }, [selectedMood]);
 
   return (
-    <div className="min-h-screen bg-pink-50 flex flex-col items-center p-6">
-      <h1 className="text-4xl font-bold mb-4 text-pink-600">Mood Journal</h1>
-      <QuoteOfTheDay />
-      <MoodSelector selectedMood={selectedMood} setSelectedMood={setSelectedMood} />
-      <JournalEntry selectedMood={selectedMood} />
-      <Timeline />
+    <Layout>
+      <h1 className="text-4xl font-handwritten text-center text-[#a17c6b] mb-6">
+        Mood Journal
+      </h1>
 
-    </div>
+      <Divider icon="🌸" />
+      <QuoteOfTheDay />
+
+      <Divider icon="🌿" />
+      <MoodSelector selectedMood={selectedMood} setSelectedMood={setSelectedMood} />
+
+      <Divider icon="🖊️" />
+      <JournalEntry selectedMood={selectedMood} />
+
+      <Divider icon="📖" />
+      <Timeline />
+    </Layout>
   );
 }
 
