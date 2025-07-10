@@ -1,20 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function RecipeForm() {
-  const [recipes, setRecipes] = useState(() => {
-    const saved = localStorage.getItem("recipes");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [form, setForm] = useState({
-    name: "",
-    steps: "",
-  });
-
+export default function RecipeForm({ onSave, onUpdate, editRecipe, isEditing }) {
+  const [form, setForm] = useState({ name: "", steps: "" });
   const [ingredientName, setIngredientName] = useState("");
   const [ingredientQty, setIngredientQty] = useState("");
   const [ingredientUnit, setIngredientUnit] = useState("g");
   const [ingredientsList, setIngredientsList] = useState([]);
+
+  useEffect(() => {
+    if (editRecipe) {
+      setForm({ name: editRecipe.name, steps: editRecipe.steps });
+      setIngredientsList(editRecipe.ingredients || []);
+    }
+  }, [editRecipe]);
 
   const addIngredient = () => {
     if (ingredientName && ingredientQty && ingredientUnit) {
@@ -28,28 +26,32 @@ export default function RecipeForm() {
     }
   };
 
+  const removeIngredient = (indexToRemove) => {
+    setIngredientsList((prev) => prev.filter((_, i) => i !== indexToRemove));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const recipe = {
       ...form,
       ingredients: ingredientsList,
     };
-    const updated = [...recipes, recipe];
-    setRecipes(updated);
-    localStorage.setItem("recipes", JSON.stringify(updated));
+
+    if (isEditing) {
+      onUpdate(recipe);
+    } else {
+      onSave(recipe);
+    }
+
     setForm({ name: "", steps: "" });
     setIngredientsList([]);
   };
-  const removeIngredient = (indexToRemove) => {
-  setIngredientsList((prev) =>
-    prev.filter((_, i) => i !== indexToRemove)
-  );
-};
-
 
   return (
     <div className="mt-10">
-      <h2 className="text-2xl font-semibold text-brand mb-4">Add a Recipe</h2>
+      <h2 className="text-2xl font-semibold text-brand mb-4">
+        {isEditing ? "Edit Recipe" : "Add a Recipe"}
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Nombre de la receta */}
         <input
@@ -66,7 +68,6 @@ export default function RecipeForm() {
           required
         />
 
-
         {/* Ingredientes */}
         <div className="flex flex-wrap gap-2 items-center">
           <input
@@ -78,8 +79,6 @@ export default function RecipeForm() {
             placeholder="Qty"
             className="w-1/4 p-2 border border-gray-300 rounded-xl"
           />
-
-
           <select
             value={ingredientUnit}
             onChange={(e) => setIngredientUnit(e.target.value)}
@@ -90,7 +89,6 @@ export default function RecipeForm() {
             <option value="ml">ml</option>
             <option value="unid">unid</option>
           </select>
-
           <input
             value={ingredientName}
             onChange={(e) =>
@@ -101,8 +99,6 @@ export default function RecipeForm() {
             placeholder="Ingredient"
             className="flex-1 p-2 border border-gray-300 rounded-xl"
           />
-
-
           <button
             type="button"
             onClick={addIngredient}
@@ -115,7 +111,10 @@ export default function RecipeForm() {
         {/* Lista de ingredientes agregados */}
         <ul className="text-sm text-gray-700 space-y-1">
           {ingredientsList.map((item, i) => (
-            <li key={i} className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded-lg">
+            <li
+              key={i}
+              className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded-lg"
+            >
               <span>
                 {item.qty} {item.unit} {item.name}
               </span>
@@ -130,8 +129,7 @@ export default function RecipeForm() {
           ))}
         </ul>
 
-
-        {/* Pasos de preparación */}
+        {/* Pasos */}
         <textarea
           name="steps"
           value={form.steps}
@@ -148,11 +146,13 @@ export default function RecipeForm() {
           className="w-full p-3 border border-gray-300 rounded-xl"
           required
         />
+
+        {/* Botón de guardar o actualizar */}
         <button
           type="submit"
           className="bg-brand text-white px-5 py-2 rounded-xl shadow hover:bg-brand-light transition"
         >
-          Save Recipe
+          {isEditing ? "Update Recipe" : "Save Recipe"}
         </button>
       </form>
     </div>

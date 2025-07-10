@@ -1,24 +1,4 @@
-import { useEffect, useState } from "react";
-
-export default function RecipeList() {
-  const [recipes, setRecipes] = useState([]);
-
-  const handleDelete = (indexToRemove) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this recipe?");
-    if (confirmDelete) {
-      const updated = recipes.filter((_, i) => i !== indexToRemove);
-      setRecipes(updated);
-      localStorage.setItem("recipes", JSON.stringify(updated));
-    }
-  };
-
-  useEffect(() => {
-    const saved = localStorage.getItem("recipes");
-    if (saved) {
-      setRecipes(JSON.parse(saved));
-    }
-  }, []);
-
+export default function RecipeList({ recipes, onDelete, onEdit }) {
   if (recipes.length === 0) {
     return (
       <p className="mt-10 text-center text-gray-500 italic">
@@ -42,7 +22,7 @@ export default function RecipeList() {
 
             <div className="text-sm text-gray-600 mb-2">
               <strong>Ingredients:</strong>
-              {Array.isArray(recipe.ingredients) ? (
+              {Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0 ? (
                 <ul className="list-disc ml-5 mt-1 space-y-1">
                   {recipe.ingredients.map((ing, i) => (
                     <li key={i}>
@@ -55,28 +35,24 @@ export default function RecipeList() {
               )}
             </div>
 
-
-            <div className="text-sm text-gray-600 mb-2">
-              <strong>Steps:</strong>
-              <ol className="list-decimal ml-5 mt-1 space-y-1">
-                {recipe.steps
-                  .split("\n")
-                  .filter((step) => step.trim() !== "")
-                  .map((step, i) => (
-                    <li key={i}>
-                      {step.trim().charAt(0).toUpperCase() + step.trim().slice(1)}
-                    </li>
-                  ))}
-              </ol>
+            <div className="text-sm text-gray-600 whitespace-pre-line mb-3">
+              <strong>Steps:</strong> {recipe.steps}
             </div>
 
-
-            <button
-              onClick={() => handleDelete(index)}
-              className="text-red-500 hover:text-red-700 text-sm"
-            >
-              🗑️ Delete
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={() => onEdit(index)}
+                className="text-blue-500 hover:text-blue-700 text-sm"
+              >
+                ✏️ Edit
+              </button>
+              <button
+                onClick={() => onDelete(index)}
+                className="text-red-500 hover:text-red-700 text-sm"
+              >
+                🗑️ Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
