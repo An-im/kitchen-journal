@@ -7,8 +7,14 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        handwritten: ['Caveat', 'cursive'],
-        sans: ['Inter', 'sans-serif'],
+      sans: ['Inter', 'sans-serif'],
+      },
+    colors: {
+      brand: {
+        DEFAULT: '#6c63ff',
+        light: '#ebe9ff',
+      },
+      accent: '#ffb703',
       },
     },
   },

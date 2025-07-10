@@ -1,38 +1,33 @@
-import { useState, useEffect } from "react";
-import MoodSelector from "./components/MoodSelector";
-import JournalEntry from "./components/JournalEntry";
-import QuoteOfTheDay from "./components/QuoteOfTheDay";
-import Timeline from "./components/Timeline";
+import { useState } from "react";
 import Layout from "./components/Layout";
-import Divider from "./components/Divider"; // ✅
+import Navbar from "./components/Navbar";
+import RecipeForm from "./components/RecipeForm";
+import RecipeList from "./components/RecipeList";
+import SeasonalVeggies from "./components/SeasonalVeggies";
+import Menus from "./components/Menus";
+import Ingredients from "./components/Ingredients";
 
 function App() {
-  const [selectedMood, setSelectedMood] = useState(null);
-
-  useEffect(() => {
-    if (selectedMood) {
-      const today = new Date().toISOString().split("T")[0];
-      localStorage.setItem(`mood-${today}`, selectedMood.emoji);
-    }
-  }, [selectedMood]);
+  const [section, setSection] = useState("Recipes");
 
   return (
     <Layout>
-      <h1 className="text-4xl font-handwritten text-center text-[#a17c6b] mb-6">
-        Mood Journal
+      <h1 className="text-4xl font-handwritten text-center text-[#a17c6b] mb-4">
+        Kitchen Journal
       </h1>
 
-      <Divider icon="🌸" />
-      <QuoteOfTheDay />
+      <Navbar section={section} setSection={setSection} />
 
-      <Divider icon="🌿" />
-      <MoodSelector selectedMood={selectedMood} setSelectedMood={setSelectedMood} />
+      {section === "Recipes" && (
+        <>
+          <SeasonalVeggies />
+          <RecipeForm />
+          <RecipeList />
+        </>
+      )}
 
-      <Divider icon="🖊️" />
-      <JournalEntry selectedMood={selectedMood} />
-
-      <Divider icon="📖" />
-      <Timeline />
+      {section === "Menus" && <Menus />}
+      {section === "Ingredients" && <Ingredients />}
     </Layout>
   );
 }
