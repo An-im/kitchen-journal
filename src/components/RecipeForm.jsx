@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function RecipeForm({ onSave, onUpdate, editRecipe, isEditing }) {
-  const [form, setForm] = useState({ name: "", steps: "" });
+  const [form, setForm] = useState({ name: "", steps: "",category: "" });
   const [ingredientName, setIngredientName] = useState("");
   const [ingredientQty, setIngredientQty] = useState("");
   const [ingredientUnit, setIngredientUnit] = useState("g");
@@ -9,10 +9,15 @@ export default function RecipeForm({ onSave, onUpdate, editRecipe, isEditing }) 
 
   useEffect(() => {
     if (editRecipe) {
-      setForm({ name: editRecipe.name, steps: editRecipe.steps });
+      setForm({ 
+        name: editRecipe.name, 
+        steps: editRecipe.steps,
+        category: editRecipe.category || ""  
+      });
       setIngredientsList(editRecipe.ingredients || []);
     }
   }, [editRecipe]);
+
 
   const addIngredient = () => {
     if (ingredientName && ingredientQty && ingredientUnit) {
@@ -128,6 +133,23 @@ export default function RecipeForm({ onSave, onUpdate, editRecipe, isEditing }) 
             </li>
           ))}
         </ul>
+        {/* Categoría */}
+        <select
+          value={form.category || ""}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              category: e.target.value,
+            })
+          }
+          required
+          className="w-full p-3 border border-gray-300 rounded-xl"
+        >
+          <option value="">Select category</option>
+          <option value="starter">Starter</option>
+          <option value="main">Main</option>
+          <option value="dessert">Dessert</option>
+        </select>
 
         {/* Pasos */}
         <textarea

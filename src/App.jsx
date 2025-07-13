@@ -6,15 +6,21 @@ import SeasonalIngredients from "./components/SeasonalVeggies";
 import Menus from "./components/Menus";
 import Layout from "./components/Layout";
 import Navbar from "./components/Navbar";
+import RecipeFormSection from "./components/RecipeFormSection";
+import RecipeListSection from "./components/RecipeListSection";
 
 export default function App() {
   const [recipes, setRecipes] = useState(() => {
     const saved = localStorage.getItem("recipes");
     return saved ? JSON.parse(saved) : [];
   });
+  const goToRecipes = () => {
+  setSection("Recipes");
+  };
 
   const [editIndex, setEditIndex] = useState(null);
-  const [section, setSection] = useState("Recipes"); // 👈 NUEVO: control de sección
+  const [section, setSection] = useState("Recipes"); 
+  const [selectedMenu, setSelectedMenu] = useState([]);
 
   useEffect(() => {
     localStorage.setItem("recipes", JSON.stringify(recipes));
@@ -50,30 +56,43 @@ export default function App() {
       <Navbar section={section} setSection={setSection} /> {/* 👈 PASAR props */}
 
       {section === "Recipes" && (
-        <>
-          <RecipeForm
-            onSave={addRecipe}
-            onUpdate={updateRecipe}
-            editRecipe={editIndex !== null ? recipes[editIndex] : null}
-            isEditing={editIndex !== null}
-          />
-          <RecipeList
-            recipes={recipes}
-            onDelete={deleteRecipe}
-            onEdit={handleEdit}
-          />
-        </>
+        <RecipeListSection
+          recipes={recipes}
+          onDelete={deleteRecipe}
+          onEdit={handleEdit}
+          selectedMenu={selectedMenu}
+          setSelectedMenu={setSelectedMenu}
+        />
+      )}
+
+      {section === "Add Recipe" && (
+        <RecipeFormSection
+          onSave={addRecipe}
+          onUpdate={updateRecipe}
+          editRecipe={editIndex !== null ? recipes[editIndex] : null}
+          isEditing={editIndex !== null}
+        />
       )}
 
       {section === "Ingredients" && (
         <>
-          <Ingredients recipes={recipes} />
+          <Ingredients
+            recipes={selectedMenu.map((index) => recipes[index]).filter(Boolean)}
+          />
           <SeasonalIngredients />
         </>
       )}
 
+
+
       {section === "Menus" && (
-        <Menus />
+        <Menus
+          recipes={recipes}
+          selectedMenu={selectedMenu}
+          setSelectedMenu={setSelectedMenu}
+          goToRecipes={goToRecipes}
+        />
+
       )}
     </Layout>
   );

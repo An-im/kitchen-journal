@@ -1,10 +1,10 @@
 export default function Navbar({ section, setSection }) {
   const tabs = [
-    { name: "Recipes", icon: "📖" },
-    { name: "Menus", icon: "🗓️" },
-    { name: "Ingredients", icon: "🧺" },
-  ];
-
+  { name: "Recipes", icon: "📖" },
+  { name: "Add Recipe", icon: "➕" },
+  { name: "Menus", icon: "🗓️" },
+  { name: "Ingredients", icon: "🧺" },
+];
   return (
     <nav className="flex gap-4 justify-center mb-6">
       {tabs.map((tab) => (
