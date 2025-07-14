@@ -66,59 +66,75 @@ export default function Ingredients({ recipes }) {
   }, [recipes]);
 
   return (
-    <div className="mt-10 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-semibold text-brand mb-4 text-center">
-        Ingredients
+    <div className="mt-10 max-w-3xl mx-auto px-4">
+      <h2 className="text-3xl font-bold text-brand text-center mb-8">
+        Ingredients Needed
       </h2>
 
+      {/* Botones de vista */}
       <div className="flex justify-center gap-4 mb-6">
         <button
           onClick={() => setView("all")}
-          className={`px-4 py-2 rounded-full text-sm ${
+          className={`px-5 py-2 rounded-full text-sm font-medium shadow transition ${
             view === "all"
               ? "bg-brand text-white"
-              : "bg-gray-100 text-brand"
+              : "bg-gray-100 text-brand hover:bg-gray-200"
           }`}
         >
           All Ingredients
         </button>
         <button
           onClick={() => setView("byCategory")}
-          className={`px-4 py-2 rounded-full text-sm ${
+          className={`px-5 py-2 rounded-full text-sm font-medium shadow transition ${
             view === "byCategory"
               ? "bg-brand text-white"
-              : "bg-gray-100 text-brand"
+              : "bg-gray-100 text-brand hover:bg-gray-200"
           }`}
         >
           By Section
         </button>
       </div>
-
+        
+      {/* Vista: Todos los ingredientes */}
       {view === "all" ? (
         allIngredients.length === 0 ? (
           <p className="text-center text-gray-500 italic">
             No ingredients needed yet.
           </p>
         ) : (
-          <ul className="text-gray-700 text-sm space-y-2">
+          <ul className="text-gray-800 text-sm space-y-2 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
             {allIngredients.map((ing, i) => (
-              <li key={i}>
-                {ing.qty} {ing.unit} {ing.name}
+              <li
+                key={i}
+                className="flex justify-between items-center border-b border-dotted border-gray-300 pb-1"
+              >
+                <span className="capitalize">{ing.name}</span>
+                <span className="ml-4 whitespace-nowrap font-medium">
+                  {ing.qty} {ing.unit}
+                </span>
               </li>
             ))}
           </ul>
         )
       ) : (
+        // Vista por categoría
         Object.entries(ingredientsByCategory).map(([category, items]) => (
-          <div key={category} className="mb-6">
-            <h3 className="text-lg font-semibold text-brand capitalize mb-2 border-b pb-1">
+          <div key={category} className="mb-8">
+            <h3 className="text-xl font-semibold text-brand capitalize mb-3 border-b border-gray-200 pb-2">
               {category}
             </h3>
+        
             {items.length > 0 ? (
-              <ul className="text-gray-700 text-sm space-y-1">
+              <ul className="text-gray-800 text-sm space-y-2 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                 {items.map((ing, i) => (
-                  <li key={i}>
-                    {ing.qty} {ing.unit} {ing.name}
+                  <li
+                    key={i}
+                    className="flex justify-between items-center border-b border-dotted border-gray-300 pb-1"
+                  >
+                    <span className="capitalize">{ing.name}</span>
+                    <span className="ml-4 whitespace-nowrap font-medium">
+                      {ing.qty} {ing.unit}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -128,6 +144,7 @@ export default function Ingredients({ recipes }) {
           </div>
         ))
       )}
+
     </div>
   );
 }

@@ -10,20 +10,27 @@ import { SECTIONS } from "../constants";
 
 export default function App() {
   const [recipes, setRecipes] = useState(() => {
-    const saved = localStorage.getItem("recipes");
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem("recipes");
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.error("Error parsing recipes from localStorage:", error);
+      return [];
+    }
+  });
+
+  const [selectedMenu, setSelectedMenu] = useState(() => {
+    try {
+      const saved = localStorage.getItem("selectedMenu");
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.error("Error parsing menu from localStorage:", error);
+      return [];
+    }
   });
 
   const [editIndex, setEditIndex] = useState(null);
   const [section, setSection] = useState(SECTIONS.LIST);
-  const [selectedMenu, setSelectedMenu] = useState(() => {
-    const saved = localStorage.getItem("selectedMenu");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const goToRecipes = () => {
-    setSection(SECTIONS.LIST);
-  };
 
   useEffect(() => {
     localStorage.setItem("recipes", JSON.stringify(recipes));
@@ -34,30 +41,49 @@ export default function App() {
   }, [selectedMenu]);
 
   const addRecipe = (recipe) => {
-    setRecipes([...recipes, recipe]);
+    const newRecipe = {
+      ...recipe,
+      createdAt: new Date().toISOString(),
+    };
+    setRecipes([newRecipe, ...recipes]); // 👈 lo agregamos al principio
   };
+
 
   const updateRecipe = (updatedRecipe) => {
     const updated = [...recipes];
     updated[editIndex] = updatedRecipe;
     setRecipes(updated);
     setEditIndex(null);
+    setSection(SECTIONS.LIST); // 👈 Volver a la sección de recetas
   };
 
   const deleteRecipe = (index) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this recipe?");
-    if (confirmDelete) {
-      const filtered = recipes.filter((_, i) => i !== index);
-      setRecipes(filtered);
-      // también lo removemos del menú si está ahí
-      setSelectedMenu((prev) => prev.filter((i) => i !== index));
+    if (!confirmDelete) return;
+
+    setRecipes((prev) => prev.filter((_, i) => i !== index));
+
+    // Si se estaba editando esta receta, reseteamos
+    if (editIndex === index) {
+      setEditIndex(null);
     }
+
+    // Limpiamos del menú cualquier índice inválido
+    setSelectedMenu((prev) =>
+      prev.filter((i) => i !== index && i < recipes.length)
+    );
   };
 
   const handleEdit = (index) => {
-    setEditIndex(index);
-    setSection(SECTIONS.ADD);
+    if (recipes[index]) {
+      setEditIndex(index);
+      setSection(SECTIONS.ADD);
+    } else {
+      console.warn("Invalid index for editing:", index);
+    }
   };
+
+  const currentRecipe = editIndex !== null && recipes[editIndex] ? recipes[editIndex] : null;
 
   return (
     <Layout>
@@ -79,15 +105,17 @@ export default function App() {
         <RecipeFormSection
           onSave={addRecipe}
           onUpdate={updateRecipe}
-          editRecipe={editIndex !== null ? recipes[editIndex] : null}
-          isEditing={editIndex !== null}
+          editRecipe={currentRecipe}
+          isEditing={!!currentRecipe}
         />
       )}
 
       {section === SECTIONS.INGREDIENTS && (
         <>
           <Ingredients
-            recipes={selectedMenu.map((index) => recipes[index]).filter(Boolean)}
+            recipes={selectedMenu
+              .map((index) => recipes[index])
+              .filter(Boolean)}
           />
           <SeasonalIngredients />
         </>
@@ -98,7 +126,7 @@ export default function App() {
           recipes={recipes}
           selectedMenu={selectedMenu}
           setSelectedMenu={setSelectedMenu}
-          goToRecipes={goToRecipes}
+          goToRecipes={() => setSection(SECTIONS.LIST)}
         />
       )}
     </Layout>

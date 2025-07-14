@@ -18,17 +18,17 @@ export default function SeasonalVeggies() {
   const veggies = veggiesByMonth[month] || [];
 
   return (
-    <div className="mt-10 px-4 py-6 bg-[#fefcf7] border border-[#e6dfd7] rounded-xl shadow-sm">
-      <h2 className="text-2xl font-handwritten text-[#a17c6b] mb-4 text-center">
+    <div className="mt-10 px-6 py-8 bg-[#fefcf7] border border-[#e6dfd7] rounded-2xl shadow-sm max-w-2xl mx-auto">
+      <h2 className="text-2xl font-semibold text-[#a17c6b] mb-6 text-center border-b border-[#e6dfd7] pb-2">
         In Season – {month.charAt(0).toUpperCase() + month.slice(1)}
-      </h2>
-
+      </h2  >
+    
       {veggies.length > 0 ? (
-        <ul className="flex flex-wrap gap-3 justify-center text-sm text-gray-800 font-medium">
+        <ul className="flex flex-wrap justify-center gap-3 text-sm text-[#374151] font-medium">
           {veggies.map((veg) => (
             <li
               key={veg}
-              className="px-3 py-1 bg-[#dceee0] rounded-full shadow hover:bg-[#cde1d4] transition"
+              className="px-4 py-1.5 bg-[#e3f2e7] rounded-full border border-[#c8e2d3] hover:bg-[#d3ebdd] transition shadow-sm"
             >
               {veg}
             </li>
@@ -40,5 +40,6 @@ export default function SeasonalVeggies() {
         </p>
       )}
     </div>
+
   );
 }

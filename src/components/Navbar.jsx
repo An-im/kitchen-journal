@@ -9,19 +9,20 @@ export default function Navbar({ section, setSection }) {
   ];
 
   return (
-    <nav className="flex gap-4 justify-center mb-6 flex-wrap">
+    <nav className="flex gap-3 justify-center mb-8 flex-wrap">
       {tabs.map((tab) => (
         <button
           key={tab.name}
           onClick={() => setSection(tab.name)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition 
+          className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 
             ${section === tab.name
-              ? "bg-brand text-white shadow"
-              : "bg-brand-light text-brand hover:bg-brand"}`}
+              ? "bg-brand text-white shadow-md"
+              : "bg-white text-brand border border-brand hover:bg-brand-light"}`}
         >
-          <span>{tab.label}</span>
+          {tab.label}
         </button>
       ))}
     </nav>
+
   );
 }
