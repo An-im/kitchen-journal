@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import RecipeForm from "./components/RecipeForm";
-import RecipeList from "./components/RecipeList";
 import Ingredients from "./components/Ingredients";
 import SeasonalIngredients from "./components/SeasonalVeggies";
 import Menus from "./components/Menus";
@@ -8,23 +6,32 @@ import Layout from "./components/Layout";
 import Navbar from "./components/Navbar";
 import RecipeFormSection from "./components/RecipeFormSection";
 import RecipeListSection from "./components/RecipeListSection";
+import { SECTIONS } from "../constants";
 
 export default function App() {
   const [recipes, setRecipes] = useState(() => {
     const saved = localStorage.getItem("recipes");
     return saved ? JSON.parse(saved) : [];
   });
-  const goToRecipes = () => {
-  setSection("Recipes");
-  };
 
   const [editIndex, setEditIndex] = useState(null);
-  const [section, setSection] = useState("Recipes"); 
-  const [selectedMenu, setSelectedMenu] = useState([]);
+  const [section, setSection] = useState(SECTIONS.LIST);
+  const [selectedMenu, setSelectedMenu] = useState(() => {
+    const saved = localStorage.getItem("selectedMenu");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const goToRecipes = () => {
+    setSection(SECTIONS.LIST);
+  };
 
   useEffect(() => {
     localStorage.setItem("recipes", JSON.stringify(recipes));
   }, [recipes]);
+
+  useEffect(() => {
+    localStorage.setItem("selectedMenu", JSON.stringify(selectedMenu));
+  }, [selectedMenu]);
 
   const addRecipe = (recipe) => {
     setRecipes([...recipes, recipe]);
@@ -42,20 +49,23 @@ export default function App() {
     if (confirmDelete) {
       const filtered = recipes.filter((_, i) => i !== index);
       setRecipes(filtered);
+      // también lo removemos del menú si está ahí
+      setSelectedMenu((prev) => prev.filter((i) => i !== index));
     }
   };
 
   const handleEdit = (index) => {
     setEditIndex(index);
+    setSection(SECTIONS.ADD);
   };
 
   return (
     <Layout>
       <h1 className="text-4xl font-bold text-center text-brand mb-8 mt-6">Kitchen Journal</h1>
 
-      <Navbar section={section} setSection={setSection} /> {/* 👈 PASAR props */}
+      <Navbar section={section} setSection={setSection} />
 
-      {section === "Recipes" && (
+      {section === SECTIONS.LIST && (
         <RecipeListSection
           recipes={recipes}
           onDelete={deleteRecipe}
@@ -65,7 +75,7 @@ export default function App() {
         />
       )}
 
-      {section === "Add Recipe" && (
+      {section === SECTIONS.ADD && (
         <RecipeFormSection
           onSave={addRecipe}
           onUpdate={updateRecipe}
@@ -74,7 +84,7 @@ export default function App() {
         />
       )}
 
-      {section === "Ingredients" && (
+      {section === SECTIONS.INGREDIENTS && (
         <>
           <Ingredients
             recipes={selectedMenu.map((index) => recipes[index]).filter(Boolean)}
@@ -83,16 +93,13 @@ export default function App() {
         </>
       )}
 
-
-
-      {section === "Menus" && (
+      {section === SECTIONS.MENU && (
         <Menus
           recipes={recipes}
           selectedMenu={selectedMenu}
           setSelectedMenu={setSelectedMenu}
           goToRecipes={goToRecipes}
         />
-
       )}
     </Layout>
   );

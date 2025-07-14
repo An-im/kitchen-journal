@@ -3,9 +3,9 @@ export default function RecipeList({ recipes, onDelete, onEdit, selectedMenu, se
     const isInMenu = selectedMenu.includes(index);
 
     const confirmed = window.confirm(
-      isInMenu
-        ? "¿Querés quitar esta receta del menú actual?"
-        : "¿Querés añadir esta receta al menú actual?"
+    isInMenu
+    ? "Do you want to remove this recipe from the current menu?"
+    : "Do you want to add this recipe to the current menu?"
     );
 
     if (!confirmed) return;
@@ -50,9 +50,15 @@ export default function RecipeList({ recipes, onDelete, onEdit, selectedMenu, se
               )}
             </div>
 
-            <div className="text-sm text-gray-600 whitespace-pre-line mb-2">
-              <strong>Steps:</strong> {recipe.steps}
+            <div className="text-sm text-gray-600 mb-2">
+              <strong>Steps:</strong>
+              <ol className="list-decimal ml-6 mt-1 space-y-1">
+                {recipe.steps.split("\n").map((step, i) => (
+                  <li key={i}>{step}</li>
+                ))}
+              </ol>
             </div>
+
 
             <div className="flex gap-3 mt-3">
               <button
@@ -71,8 +77,9 @@ export default function RecipeList({ recipes, onDelete, onEdit, selectedMenu, se
                 onClick={() => toggleMenu(index)}
                 className="text-green-600 hover:underline text-sm"
               >
-                {selectedMenu.includes(index) ? "✅ En el menú" : "➕ Añadir al menú"}
+                {selectedMenu.includes(index) ? "✅ In the menu" : "➕ Add to menu"}
               </button>
+
             </div>
           </li>
         ))}
