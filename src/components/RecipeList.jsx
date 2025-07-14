@@ -46,20 +46,56 @@ export default function RecipeList({ recipes, onDelete, onEdit, selectedMenu, se
 
   // Descargar como PDF
   function downloadRecipeAsPDF(recipe) {
-    const element = document.createElement("div");
+  const element = document.createElement("div");
+
     element.innerHTML = `
-      <h1>${recipe.name}</h1>
-      <h3>Category: ${recipe.category}</h3>
-      <h4>Ingredients:</h4>
-      <ul>
-        ${recipe.ingredients.map(
-          (ing) => `<li>${ing.qty} ${ing.unit} ${ing.name}</li>`
-        ).join("")}
-      </ul>
-      <h4>Steps:</h4>
-      <ol>
-        ${recipe.steps.split("\n").map((step) => `<li>${step}</li>`).join("")}
-      </ol>
+      <div style="
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 24px;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      ">
+
+        <header style="text-align: center; margin-bottom: 32px;">
+          <h1 style="
+            color: #5b21b6;
+            font-size: 32px;
+            margin: 0;
+          ">${recipe.name}</h1>
+          <p style="color: #666; font-size: 16px; margin-top: 4px;">
+            Category: <strong>${recipe.category}</strong>
+          </p>
+        </header>
+
+        <section style="margin-bottom: 24px;">
+          <h2 style="color: #333; font-size: 20px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
+            Ingredients
+          </h2>
+          <ul style="margin-top: 12px; font-size: 14px; color: #444; line-height: 1.6;">
+            ${recipe.ingredients
+              .map(
+                (ing) =>
+                  `<li>${ing.qty} ${ing.unit} ${ing.name}</li>`
+              )
+              .join("")}
+          </ul>
+        </section>
+
+        <section>
+          <h2 style="color: #333; font-size: 20px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
+            Method
+          </h2>
+          <ol style="margin-top: 12px; font-size: 14px; color: #444; line-height: 1.8;">
+            ${recipe.steps
+              .split("\n")
+              .map((step) => `<li>${step}</li>`)
+              .join("")}
+          </ol>
+        </section>
+      </div>
     `;
 
     html2pdf()
@@ -72,6 +108,7 @@ export default function RecipeList({ recipes, onDelete, onEdit, selectedMenu, se
       .from(element)
       .save();
   }
+
 
   return (
     <div className="mt-10">
