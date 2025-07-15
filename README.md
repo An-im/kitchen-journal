@@ -76,25 +76,25 @@ src/
 ## 📸 Screenshots
 
 ### Recipe Section
-![Recipes](./assets/recipes.png)
+![Recipes](src/assets/recipes.png)
 
 ### Add Recipe Form
-![Add Recipe](./assets/add-recipe.png)
+![Add Recipe](src/assets/add-recipe.png)
 
 ### Edit Recipe
-![Edit Recipe](./assets/edit-recipe.png)
+![Edit Recipe](src/assets/edit-recipe.png)
 
 ### Ingredients View
-![Ingredients](./assets/ingredients.png)
+![Ingredients](src/assets/ingredients.png)
 
 ### Ingredients by Section
-![Ingredients by Section](./assets/ingredients-sec.png)
+![Ingredients by Section](src/assets/ingredients-sec.png)
 
 ### Menu Section
-![Menu](./assets/menu.png)
+![Menu](src/assets/menu.png)
 
 ### Downloaded Recipe View (PDF)
-![Downloaded Recipe](./assets/downloaded-recipe.png)
+![Downloaded Recipe](src/assets/downloaded-recipe.png)
 
 
 ---
