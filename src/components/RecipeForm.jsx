@@ -18,12 +18,15 @@ export default function RecipeForm({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const recipeData = {
-      name: form.name.trim(),
-      category: form.category,
-      ingredients: ingredientsList,
-      steps: stepsList.join("\n"),
-    };
+  const recipeData = {
+    id: editRecipe?.id || undefined,
+    createdAt: editRecipe?.createdAt || new Date().toISOString(),
+    name: form.name.trim(),
+    category: form.category,
+    ingredients: ingredientsList,
+    steps: stepsList.join("\n"),
+  };
+
 
     isEditing ? onUpdate(recipeData) : onSave(recipeData);
 

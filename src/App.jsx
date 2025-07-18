@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import RecipeFormSection from "./components/RecipeFormSection";
 import RecipeListSection from "./components/RecipeListSection";
 import { SECTIONS } from "../constants";
+import { nanoid } from "nanoid"; // ✅ para crear IDs únicos
 
 export default function App() {
   const [recipes, setRecipes] = useState(() => {
@@ -29,7 +30,7 @@ export default function App() {
     }
   });
 
-  const [editIndex, setEditIndex] = useState(null);
+  const [editId, setEditId] = useState(null);
   const [section, setSection] = useState(SECTIONS.LIST);
 
   useEffect(() => {
@@ -43,51 +44,41 @@ export default function App() {
   const addRecipe = (recipe) => {
     const newRecipe = {
       ...recipe,
+      id: nanoid(), // ✅ ID único
       createdAt: new Date().toISOString(),
     };
-    setRecipes([newRecipe, ...recipes]); // 👈 lo agregamos al principio
+    setRecipes([newRecipe, ...recipes]); // agrega al inicio
   };
-
 
   const updateRecipe = (updatedRecipe) => {
-    const updated = [...recipes];
-    updated[editIndex] = updatedRecipe;
+    const updated = recipes.map((r) =>
+      r.id === updatedRecipe.id ? updatedRecipe : r
+    );
     setRecipes(updated);
-    setEditIndex(null);
-    setSection(SECTIONS.LIST); // 👈 Volver a la sección de recetas
+    setEditId(null);
+    setSection(SECTIONS.LIST);
   };
 
-  const deleteRecipe = (index) => {
+  const deleteRecipe = (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this recipe?");
     if (!confirmDelete) return;
 
-    setRecipes((prev) => prev.filter((_, i) => i !== index));
-
-    // Si se estaba editando esta receta, reseteamos
-    if (editIndex === index) {
-      setEditIndex(null);
-    }
-
-    // Limpiamos del menú cualquier índice inválido
-    setSelectedMenu((prev) =>
-      prev.filter((i) => i !== index && i < recipes.length)
-    );
+    setRecipes((prev) => prev.filter((r) => r.id !== id));
+    setSelectedMenu((prev) => prev.filter((i) => i !== id));
   };
 
-  const handleEdit = (index) => {
-    if (recipes[index]) {
-      setEditIndex(index);
-      setSection(SECTIONS.ADD);
-    } else {
-      console.warn("Invalid index for editing:", index);
-    }
+  const handleEdit = (id) => {
+    setEditId(id);
+    setSection(SECTIONS.ADD);
   };
 
-  const currentRecipe = editIndex !== null && recipes[editIndex] ? recipes[editIndex] : null;
+  const currentRecipe = editId !== null ? recipes.find((r) => r.id === editId) : null;
 
   return (
     <Layout>
-      <h1 className="text-4xl font-bold text-center text-brand mb-8 mt-6">Kitchen Journal</h1>
+      <h1 className="text-4xl font-bold text-center text-brand mb-8 mt-6">
+        Kitchen Journal
+      </h1>
 
       <Navbar section={section} setSection={setSection} />
 
@@ -106,16 +97,14 @@ export default function App() {
           onSave={addRecipe}
           onUpdate={updateRecipe}
           editRecipe={currentRecipe}
-          isEditing={!!currentRecipe}
+          isEditing={currentRecipe !== null}
         />
       )}
 
       {section === SECTIONS.INGREDIENTS && (
         <>
           <Ingredients
-            recipes={selectedMenu
-              .map((index) => recipes[index])
-              .filter(Boolean)}
+            recipes={recipes.filter((r) => selectedMenu.includes(r.id))}
           />
           <SeasonalIngredients />
         </>
